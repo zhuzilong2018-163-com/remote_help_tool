@@ -1,6 +1,6 @@
 include $(HOME)/config.mk
 #添加头文件路径
-INCLUDE += -I(COMMON)/inc
+INCLUDE += -I$(COMMON)/inc
 CFLAGS += -Wall
 
 #添加库文件路劲和链接库文件
@@ -15,7 +15,7 @@ SOURCE = $(foreach dir,$(SRCDIRS),$(wildcard $(dir)/*.c))
 OBJS=$(addprefix $(OBJPATH)/, $(addsuffix .o, $(basename $(SOURCE))))
 
 $(OBJPATH)/%.o : %.c
-	$(CC) -c  $(CFLAGS) -o $@ $<
+	$(CC) -c $(INCLUDE) $(CFLAGS) -o $@ $<
 
 $(TARGET): $(OBJS)
 	$(AR) crs $@  $^
