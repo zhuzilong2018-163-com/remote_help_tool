@@ -1,4 +1,4 @@
-HOME=/home/zhu/remote_help_tool
+HOME=/root/my_work1/remote_help_tool
 
 COMMON=$(HOME)/common
 SERVER=$(HOME)/server
