@@ -4,9 +4,9 @@ INCLUDE += -I$(COMMON)/inc
 CFLAGS += -Wall
 
 #添加库文件路劲和链接库文件
-#LDFLAGS +=
+LDFLAGS += -L$(RELEASE_LIB) -llogPrint
 
-TARGET=$(RELEASE_LIB)/liblogPrint.a
+TARGET=$(RELEASE_BIN)/serve
 
 OBJPATH	= obj
 SRCDIRS = .
@@ -18,7 +18,8 @@ $(OBJPATH)/%.o : %.c
 	$(CC) -c $(INCLUDE) $(CFLAGS) -o $@ $<
 
 $(TARGET): $(OBJS)
-	$(AR) crs $@  $^
+	$(CC)  -o $@  $^ $(LDFLAGS)
+	$(STRIP) $(TARGET)
 
 clean:
 	rm -rf $(TARGET)

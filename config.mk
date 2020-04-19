@@ -14,3 +14,4 @@ CXX=g++
 
 RELEASE=$(OUTPUT)/release
 RELEASE_LIB=$(OUTPUT)/lib
+RELEASE_BIN=$(OUTPUT)/bin
