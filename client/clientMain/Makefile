@@ -1,6 +1,7 @@
 include ../../config.mk
 #添加头文件路径
 INCLUDE += -I$(COMMON)/inc
+INCLUDE += -I$(CLIENT)/inc
 CFLAGS += -Wall
 
 #添加库文件路劲和链接库文件
