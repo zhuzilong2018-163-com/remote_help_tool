@@ -5,8 +5,11 @@
 extern "C" { 
 #endif 
 
+#define SERVER_IP    "47.93.49.83"
+#define SERVER_PORT  443
 #define ID_CODE_LEN  128
 #define IP_LEN       128
+
 typedef enum {
 	E_CONNECT_P2P   = 0, //客户端通过P2P方式连接
 	E_CONNECT_RELAT = 1, //客户端通过服务器中转连接
