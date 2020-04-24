@@ -1,3 +1,6 @@
+#ifndef __tpyeinit_h
+#define __tpyeinit_h
+
 typedef   signed          char u8
 typedef   signed short     int u16
 typedef   signed           int u32
