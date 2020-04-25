@@ -1,10 +1,30 @@
-#ifndef __tpyeinit_h
-#define __tpyeinit_h
+#ifndef __TYPEINIT_H
+#define __TYPEINIT_H
 
-typedef   signed          char u8
-typedef   signed short     int u16
-typedef   signed           int u32
 
-typedef unsigned          char uint8
-typedef unsigned short     int uint16
-typedef unsigned           int uint32
+#ifdef __cplusplus 
+extern "C" { 
+#endif 
+
+typedef signed char          int8;
+typedef unsigned char        uint8;
+typedef short                int16;
+typedef unsigned short       uint16;
+typedef int                  int32;
+typedef unsigned             uint32;
+typedef long long            int64;
+typedef unsigned long long   uint64;
+
+typedef enum {
+    FALSE = 0,
+	TURE  = 1,
+} E_BOOL_TYPE;
+
+
+
+#ifdef __cplusplus 
+}
+#endif
+
+
+#endif
