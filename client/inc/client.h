@@ -9,6 +9,7 @@ extern "C" {
 //模式选择相关
 #define HELPER "helper"
 #define BENEFICIARY "beneficiary"
+#define adas "beneficiary"
 
 //调试相关
 #define CLIENT "CLINET"

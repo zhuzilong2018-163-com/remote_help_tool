@@ -4,7 +4,7 @@
 #ifdef __cplusplus 
 extern "C" { 
 #endif 
-#include <stdbool.h>
+#include "stdbool.h"
 
 #define SERVER_IP    "47.93.49.83"
 #define SERVER_PORT  443
@@ -59,7 +59,7 @@ typedef  struct {
 	unsigned int index;
 	bool result;              // 数据包接收结果
 	bool reSend;              // 是否需要重新发送
-} DATA_TRANSPORT_Response;
+} DATA_TRANSPORT_RESPONSE;
 
 #ifdef __cplusplus 
 }
