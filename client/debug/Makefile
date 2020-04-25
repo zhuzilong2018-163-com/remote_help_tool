@@ -8,7 +8,7 @@ CFLAGS += -Wall
 LDFLAGS += -L$(RELEASE_LIB) -llogPrint
 LDFLAGS += -L$(RELEASE_LIB) -laes
 
-TARGET=$(RELEASE_BIN)/client
+TARGET=$(RELEASE_BIN)/debug
 
 OBJPATH	= obj
 SRCDIRS = .

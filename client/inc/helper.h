@@ -4,8 +4,9 @@
 #ifdef __cplusplus 
 extern "C" { 
 #endif 
+#include "typeinit.h"
 
-extern void helper_mode_start(void);
+extern int32 helper_mode_start(void);
 
 #ifdef __cplusplus 
 }

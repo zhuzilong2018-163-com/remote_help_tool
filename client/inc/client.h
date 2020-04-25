@@ -20,7 +20,7 @@ typedef enum {
 	E_MODE_HELPER = 1,      //HELPER模式
 	E_MODE_BENEFICIARY = 2, //BENEFICIARY模式
 	E_MODE_BUTT,
-} E_CLIENT_TYPE;
+} E_CLIENT_MDOE_TYPE;
 
 
 

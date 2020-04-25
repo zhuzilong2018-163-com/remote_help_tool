@@ -20,6 +20,11 @@ typedef enum {
 	TURE  = 1,
 } E_BOOL_TYPE;
 
+typedef enum {
+	FAIL   = -1,
+	STR_NULL   = 0,
+	SUCESS = 1, 
+} E_RETURN_TYPE;
 
 
 #ifdef __cplusplus 

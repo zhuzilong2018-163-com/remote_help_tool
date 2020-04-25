@@ -1,14 +1,12 @@
 include ../../config.mk
-#Ìí¼ÓÍ·ÎÄ¼þÂ·¾¶
+#æ·»åŠ å¤´æ–‡ä»¶è·¯å¾„
 INCLUDE += -I$(COMMON)/inc
-INCLUDE += -I$(CLIENT)/inc
 CFLAGS += -Wall
 
-#Ìí¼Ó¿âÎÄ¼þÂ·¾¢ºÍÁ´½Ó¿âÎÄ¼þ
-LDFLAGS += -L$(RELEASE_LIB) -llogPrint
-LDFLAGS += -L$(RELEASE_LIB) -laes
+#æ·»åŠ åº“æ–‡ä»¶è·¯åŠ²å’Œé“¾æŽ¥åº“æ–‡ä»¶
+#LDFLAGS +=
 
-TARGET=$(RELEASE_BIN)/client
+TARGET=$(RELEASE_LIB)/libaes.a
 
 OBJPATH	= obj
 SRCDIRS = .
@@ -20,8 +18,7 @@ $(OBJPATH)/%.o : %.c
 	$(CC) -c $(INCLUDE) $(CFLAGS) -o $@ $<
 
 $(TARGET): $(OBJS)
-	$(CC)  -o $@  $^ $(LDFLAGS)
-	$(STRIP) $(TARGET)
+	$(AR) crs $@  $^
 
 clean:
 	rm -rf $(TARGET)
