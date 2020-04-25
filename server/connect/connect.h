@@ -5,6 +5,8 @@
 extern "C" { 
 #endif
 
+int connectInit(unsigned short int port);
+
 
 #ifdef __cplusplus 
 }

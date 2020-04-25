@@ -27,4 +27,5 @@ echo CXX=g++ >> $FILE
 echo RELEASE=$RELEASE >> $FILE
 echo RELEASE_LIB=$RELEASE_LIB >> $FILE
 echo RELEASE_BIN=$RELEASE_BIN >> $FILE
-echo "build config.mk sucessfully"
+echo "build config.mk successful!"
+
