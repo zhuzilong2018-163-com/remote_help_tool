@@ -16,7 +16,7 @@ int main(int argc, char *argv[])
 
 	while(1) {
 		SERVE_INFO("--------main function run!--------");
-		waitAuthRequest
+		waitAuthRequest();
 
 		
 	}

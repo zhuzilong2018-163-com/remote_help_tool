@@ -37,10 +37,9 @@ int32 helper_mode_start(void)
         return l_res;
     }
 
-    auth_header_request.connectType = E_CONNECT_RELAT;
+    auth_header_request.connectType = E_CONNECT_RELAY;
     auth_header_request.encryptType = E_ENCYRPT_NULL;
     auth_header_request.clientType = E_CLIENT_GET;
-    auth_header_request.commType = 2;
 
 	write(sockfd, (uint8 *)&auth_header_request, sizeof(AUTH_HEADER_REQUEST));
 

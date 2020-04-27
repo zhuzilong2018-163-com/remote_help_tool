@@ -13,7 +13,7 @@
 SERVE_SOCKET g_serverListenFd = {
 	.authFd = -1,
 	.dataFd = -1,
-	.prot = 0
+	.port = 0,
 };
 
 
@@ -65,10 +65,10 @@ int connectInit(unsigned short int port)
 int waitAuthRequest()
 {
 	
-	return 0
+	return 0;
 }
 
 int addConnectToqueue()
 {
-	
+	return 0;
 }
