@@ -1,5 +1,4 @@
 #include <arpa/inet.h>
-#include <sys/types.h>
 #include <sys/socket.h>
 #include <string.h>
 #include <unistd.h>
@@ -62,13 +61,21 @@ int connectInit(unsigned short int port)
 	return -1;
 }
 
-int waitAuthRequest()
+int waitAuthRequest(struct sockaddr_in * clientAddr)
 {
-	
-	return 0;
+	int socfFd;
+	socklen_t len;
+	do {
+       socfFd = accept(g_serverListenFd.authFd, (struct sockaddr *)&clientAddr, &len);
+    	if(socfFd < 0) {
+        	continue;
+    	}
+    	break;
+	} while (1);
+	return socfFd;
 }
 
-int addConnectToqueue()
+int addConnectToqueue(int sockFd,struct sockaddr_in *clientAddr)
 {
 	return 0;
 }

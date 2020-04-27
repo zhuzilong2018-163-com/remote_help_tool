@@ -1,4 +1,5 @@
 #include <stdio.h>
+#include <string.h>
 #include "server.h"
 #include "logPrint.h"
 #include "connect.h"
@@ -6,18 +7,23 @@
 
 int main(int argc, char *argv[])
 {
-	int listenHandle = -1;
+	int res;
+	int sockFd;
+	struct sockaddr_in clientAddr;
 	
-	listenHandle = connectInit(SERVER_PORT);
-	if (listenHandle < 0) {
+	res = connectInit(SERVER_PORT);
+	if (res < 0) {
 		SERVE_ERROR("connectInit error!");
 		return 0;
 	}
 
 	while(1) {
 		SERVE_INFO("--------main function run!--------");
-		waitAuthRequest();
+		memset(&clientAddr, 0, sizeof(clientAddr));
+		sockFd = waitAuthRequest(&clientAddr);
+		if (sockFd < 0) continue;
 
+		
 		
 	}
 
