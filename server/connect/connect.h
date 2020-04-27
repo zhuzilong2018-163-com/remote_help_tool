@@ -5,6 +5,12 @@
 extern "C" { 
 #endif
 
+typedef struct {
+	int authFd;
+	int dataFd;
+	unsigned short int port;
+} SERVE_SOCKET;
+
 int connectInit(unsigned short int port);
 
 

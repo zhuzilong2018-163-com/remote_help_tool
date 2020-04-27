@@ -10,6 +10,8 @@ extern "C" {
 #define SERVE_WARN(format,...) WARN_LOG("SERVER",format,##__VA_ARGS__)
 #define SERVE_ERROR(format,...) ERROR_LOG("SERVER",format,##__VA_ARGS__)
 
+
+
 #ifdef __cplusplus 
 }
 #endif
