@@ -15,6 +15,7 @@ SERVE_SOCKET g_serverListenFd = {
 	.port = 0,
 };
 
+CLIENT_QUEUE g_sessionQue[MAX_SESSION_NUM];
 
 int connectInit(unsigned short int port)
 {
@@ -24,6 +25,8 @@ int connectInit(unsigned short int port)
 	struct sockaddr_in server;
 
 	do {
+
+		memset(g_sessionQue, 0, sizeof(g_sessionQue));
 
 		g_serverListenFd.port = port;
 	
@@ -74,8 +77,26 @@ int waitAuthRequest(struct sockaddr_in * clientAddr)
 	} while (1);
 	return socfFd;
 }
-
+/*
+ * 没有sessionID时分配ID并加入队列，否则回复对应sessionID对应的信息
+ */
 int addConnectToqueue(int sockFd,struct sockaddr_in *clientAddr)
+{
+	AUTH_HEADER_REQUEST request;
+	int res;
+	int size;
+
+	memset(&request, 0, sizeof(request));
+
+	size =  recv(sockFd, (void *)&request, sizeof(request), 0);
+	if (size < sizeof(request)) {
+		return -1;
+	}
+	
+	return 0;
+}
+
+int removeConnectToqueue(unsigned int ssionId)
 {
 	return 0;
 }

@@ -10,7 +10,7 @@ extern "C" {
 #include <netinet/in.h> 
 #include "protocol.h"
 
-#define MAX_CLIENT_NUM
+#define MAX_SESSION_NUM 32
 
 typedef struct {
 	int authFd;
@@ -25,10 +25,11 @@ typedef struct {
 	bool sessionStatus;
 } CLIENT_QUEUE;
 
+
 int connectInit(unsigned short int port);
 int waitAuthRequest(struct sockaddr_in * clientAddr);
-
-
+int addConnectToqueue(int sockFd,struct sockaddr_in *clientAddr);
+int removeConnectToqueue(unsigned int ssionId);
 
 #ifdef __cplusplus 
 }

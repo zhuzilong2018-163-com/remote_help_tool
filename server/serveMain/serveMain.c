@@ -4,12 +4,18 @@
 #include "logPrint.h"
 #include "connect.h"
 #include "protocol.h"
+#include "taskProcess.h"
 
 int main(int argc, char *argv[])
 {
 	int res;
 	int sockFd;
 	struct sockaddr_in clientAddr;
+
+	res = taskProcessInit();
+	if (res < 0) {
+		SERVE_ERROR("taskProcessInit error!");
+	}
 	
 	res = connectInit(SERVER_PORT);
 	if (res < 0) {
@@ -23,8 +29,10 @@ int main(int argc, char *argv[])
 		sockFd = waitAuthRequest(&clientAddr);
 		if (sockFd < 0) continue;
 
-		
-		
+		res = addConnectToqueue(sockFd, &clientAddr);
+		if (res < 0) {
+			SERVE_ERROR("add connect to queue!");
+		}	
 	}
 
 	return 0;
