@@ -14,13 +14,13 @@ void logPrint(char level, const char *moduleName, const char *fileName, const ch
 	va_list args;
 
 	if(level == DEBUG) {
-		sprintf(tempPrint, "DEBUG ");
+		sprintf(tempPrint, "[DEBUG]");
 	} else if (level == INFO) {
-		sprintf(tempPrint, "INFO  ");
+		sprintf(tempPrint, "[INFO ]");
 	} else if (level == WARN) {
-		sprintf(tempPrint, "WARN  ");
+		sprintf(tempPrint, "[WARNG]");
 	} else if (level == ERROR) {
-		sprintf(tempPrint, "ERROR ");
+		sprintf(tempPrint, "[ERROR]");
 	} else {
 		pthread_mutex_unlock(&g_printLock);
 		return;
@@ -43,6 +43,8 @@ void logPrint(char level, const char *moduleName, const char *fileName, const ch
 
 	lenOfTemp = strlen(tempPrint);
 	sprintf(tempPrint + lenOfTemp, "%d]  ",lineNum);
+	
+
 
 	va_start(args, format);
 	vsprintf(&tempPrint[strlen(tempPrint)], format, args);
@@ -50,6 +52,12 @@ void logPrint(char level, const char *moduleName, const char *fileName, const ch
 	
 	printf("%s\n",tempPrint);
 
+	lenOfTemp = strlen(tempPrint);
+	sprintf(tempPrint + lenOfTemp, "\n");
+	FILE *fp = fopen("/home/myshare/remote_help_tool/common/logManage/log.txt","a+");
+	fwrite(tempPrint,1,strlen(tempPrint),fp);
+	fclose(fp);
+	
 	pthread_mutex_unlock(&g_printLock);
 }
 

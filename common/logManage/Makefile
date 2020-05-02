@@ -23,6 +23,7 @@ $(TARGET): $(OBJS)
 clean:
 	rm -rf $(TARGET)
 	rm -rf *.o
+	rm -rf log.txt
 	@for d in $(OBJDIRS);     \
 	 do                   \
 		rm -rf  $$d/*.o ;\
