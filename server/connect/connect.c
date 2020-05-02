@@ -2,9 +2,11 @@
 #include <sys/socket.h>
 #include <string.h>
 #include <unistd.h>
+#include <pthread.h>
 #include <sys/types.h>
 #include <sys/socket.h>
 #include <sys/types.h>
+#include <time.h>
 #include "server.h"
 #include "logPrint.h"
 #include "connect.h"
@@ -15,8 +17,8 @@ SERVE_SOCKET g_serverListenFd = {
 	.port = 0,
 };
 
-CLIENT_QUEUE g_sessionQue[MAX_SESSION_NUM];
-
+CLIENT_QUEUE g_connecQueue[MAX_SESSION_NUM];
+pthread_mutex_t g_connecQueueLock = PTHREAD_MUTEX_INITIALIZER;
 int connectInit(unsigned short int port)
 {
 	int listenFd = -1;
@@ -26,7 +28,7 @@ int connectInit(unsigned short int port)
 
 	do {
 
-		memset(g_sessionQue, 0, sizeof(g_sessionQue));
+		memset(g_connecQueue, 0, sizeof(g_connecQueue));
 
 		g_serverListenFd.port = port;
 	
@@ -80,23 +82,83 @@ int waitAuthRequest(struct sockaddr_in * clientAddr)
 /*
  * 没有sessionID时分配ID并加入队列，否则回复对应sessionID对应的信息
  */
-int addConnectToqueue(int sockFd,struct sockaddr_in *clientAddr)
+int processClientRequest(int sockFd,struct sockaddr_in *clientAddr)
 {
 	AUTH_HEADER_REQUEST request;
+	AUTH_HEADER_RESPONSE response;
 	int res;
+	bool ret;
 	int size;
-
+	CLIENT_QUEUE connectiInfo;
+	
 	memset(&request, 0, sizeof(request));
+	memset(&response, 0, sizeof(response));
 
 	size =  recv(sockFd, (void *)&request, sizeof(request), 0);
 	if (size < sizeof(request)) {
 		return -1;
 	}
+
+	if (request.clientType == E_CLIENT_GET) {
+		//bool addConnectToQueue(CLIENT_QUEUE info);
+	} else if (request.clientType == E_CLIENT_PUT) {
+		memset(&connectiInfo, 0, sizeof(connectiInfo));
+		ret = findConnectOfQueue(request.sessionId, &connectiInfo);
+		if (!ret) {
+			response.result = -1;
+		} else {
+			response.result = 0;
+			//strcpy(connectiInfo.clientPutIp, server.sin_addr.s_addr);
+			response.connectType = request.connectType;
+			response.encryptType = request.encryptType;
+			response.sessionId = connectiInfo.sessionId;
+			strcpy(response.ip, connectiInfo.clientGetIp);
+			
+		}
+		
+	}
+
+	
 	
 	return 0;
 }
 
-int removeConnectToqueue(unsigned int ssionId)
+int removeConnectToQueue(unsigned int ssionId)
 {
 	return 0;
+}
+
+bool findConnectOfQueue(unsigned int sessionId, CLIENT_QUEUE *conectInfo)
+{
+	int i;
+	bool result = false;
+	time_t timeNow;
+
+	pthread_mutex_lock(&g_connecQueueLock);
+	for(i = 0; i < MAX_SESSION_NUM; i++) {
+		if (!g_connecQueue[i].sessionStatus) continue;
+		if (g_connecQueue[i].sessionId == sessionId) {
+			result = true;
+		}
+	}
+	do {
+		timeNow = time(NULL);
+
+		if (timeNow > g_connecQueue[i].terminalTime) {
+			g_connecQueue[i].sessionStatus = false;
+			result = false;
+			break;
+		}
+		
+		if (result) {
+			memcpy(conectInfo, &g_connecQueue[i], sizeof(conectInfo));
+		}
+	} while (0);
+	pthread_mutex_unlock(&g_connecQueueLock);
+	return result;
+}
+
+bool addConnectToQueue(CLIENT_QUEUE info)
+{
+	return true;
 }

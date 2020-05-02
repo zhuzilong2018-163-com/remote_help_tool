@@ -40,6 +40,7 @@ typedef struct {
 	E_CONNECT_TYPE connectType;
 	E_ENCYRPT_TYPE encryptType;
 	E_CLIENT_TYPE clientType;
+	unsigned int sessionId;    //发起方该成员无效
 	char key[ID_CODE_LEN];     //用于后续数据发送时加密
 } AUTH_HEADER_REQUEST;
 
@@ -47,6 +48,7 @@ typedef struct {
 	E_CONNECT_TYPE connectType;
 	E_ENCYRPT_TYPE encryptType;
 	unsigned int sessionId;
+	int result;                // 等于0表示请求成功，小于0代表失败，数值为错误码
 	char ip[IP_LEN];           // p2p连接时存储对方客户端的IP地址 格式 ip:port
 } AUTH_HEADER_RESPONSE;
 

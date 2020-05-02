@@ -29,7 +29,7 @@ int main(int argc, char *argv[])
 		sockFd = waitAuthRequest(&clientAddr);
 		if (sockFd < 0) continue;
 
-		res = addConnectToqueue(sockFd, &clientAddr);
+		res = processClientRequest(sockFd, &clientAddr);
 		if (res < 0) {
 			SERVE_ERROR("add connect to queue!");
 		}	

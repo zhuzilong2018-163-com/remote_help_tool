@@ -21,6 +21,7 @@ typedef struct {
 typedef struct {
 	char clientGetIp[IP_LEN];
 	char clientPutIp[IP_LEN];
+	unsigned int sessionId;
 	time_t terminalTime;
 	bool sessionStatus;
 } CLIENT_QUEUE;
@@ -28,8 +29,11 @@ typedef struct {
 
 int connectInit(unsigned short int port);
 int waitAuthRequest(struct sockaddr_in * clientAddr);
-int addConnectToqueue(int sockFd,struct sockaddr_in *clientAddr);
-int removeConnectToqueue(unsigned int ssionId);
+int processClientRequest(int sockFd,struct sockaddr_in *clientAddr);
+bool findConnectOfQueue(unsigned int sessionId, CLIENT_QUEUE *conectInfo);
+int removeConnectToQueue(unsigned int sessionId);
+bool addConnectToQueue(CLIENT_QUEUE info);
+
 
 #ifdef __cplusplus 
 }
