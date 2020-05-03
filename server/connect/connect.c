@@ -7,6 +7,7 @@
 #include <sys/socket.h>
 #include <sys/types.h>
 #include <time.h>
+#include <errno.h>
 #include "server.h"
 #include "logPrint.h"
 #include "connect.h"
@@ -25,6 +26,7 @@ int connectInit(unsigned short int port)
 	int res;
 	socklen_t len;
 	struct sockaddr_in server;
+	int b_reuse = 1;
 
 	do {
 
@@ -33,29 +35,48 @@ int connectInit(unsigned short int port)
 		g_serverListenFd.port = port;
 	
 		g_serverListenFd.authFd = socket(AF_INET, SOCK_STREAM, 0);
-		if (listenFd < 0) {
+		if (g_serverListenFd.authFd < 0) {
 	    	SERVE_ERROR("Create server auth listen error!");
 	    	break;
 		}
 
+		res = setsockopt(g_serverListenFd.authFd,SOL_SOCKET,SO_REUSEADDR,&b_reuse,sizeof(int));
+		if (res < 0) {
+			SERVE_WARN("set auth sock reuser error!");
+		}
+
+		listenFd = g_serverListenFd.authFd;
+		
 		g_serverListenFd.dataFd = socket(AF_INET, SOCK_DGRAM, 0);
-		if (listenFd < 0) {
+		if (g_serverListenFd.authFd < 0) {
 	    	SERVE_ERROR("Create server error!");
 	    	break;
 		}
 
+		res = setsockopt(g_serverListenFd.dataFd,SOL_SOCKET,SO_REUSEADDR,&b_reuse,sizeof(int)); 
+		if (res < 0) {
+			SERVE_WARN("set data sock reuser error!");
+		}
 		memset(&server, 0, sizeof(server));
 		server.sin_family = AF_INET;
 		server.sin_port   = htons(port);
 		server.sin_addr.s_addr = htonl(INADDR_ANY);
 		len = sizeof(server);
+		errno = 0;
 		res = bind(listenFd, (struct sockaddr *)&server, len);
 		if (res < 0) {
 	    	close(listenFd);
-			SERVE_ERROR("Bind ip error!");
+			SERVE_ERROR("Bind ip error!errno:%d,%s\n",errno,strerror(errno));
 	    	break;
 		}
 
+		errno = 0;
+		res = listen(listenFd, 20);
+		if (res < 0) {
+			SERVE_ERROR("listen error!errno:%d,%s\n",errno,strerror(errno));
+			break;
+		}
+		
 		return 0;
 	} while(0);
 
@@ -99,6 +120,8 @@ int processClientRequest(int sockFd,struct sockaddr_in *clientAddr)
 		return -1;
 	}
 
+	SERVE_INFO("client type:%d\t connect type:%d",request.clientType, request.connectType);
+	
 	if (request.clientType == E_CLIENT_GET) {
 		//bool addConnectToQueue(CLIENT_QUEUE info);
 	} else if (request.clientType == E_CLIENT_PUT) {
@@ -113,13 +136,16 @@ int processClientRequest(int sockFd,struct sockaddr_in *clientAddr)
 			response.encryptType = request.encryptType;
 			response.sessionId = connectiInfo.sessionId;
 			strcpy(response.ip, connectiInfo.clientGetIp);
-			
 		}
 		
 	}
 
-	
-	
+	size = send(sockFd, (const void *) &response, sizeof(AUTH_HEADER_RESPONSE), 0);
+	if (size < 0) {
+		SERVE_ERROR("send auth data error!\n");
+	}
+
+	close(sockFd);	
 	return 0;
 }
 
@@ -151,7 +177,7 @@ bool findConnectOfQueue(unsigned int sessionId, CLIENT_QUEUE *conectInfo)
 		}
 		
 		if (result) {
-			memcpy(conectInfo, &g_connecQueue[i], sizeof(conectInfo));
+			memcpy(conectInfo, &g_connecQueue[i], sizeof(CLIENT_QUEUE));
 		}
 	} while (0);
 	pthread_mutex_unlock(&g_connecQueueLock);

@@ -54,7 +54,7 @@ void logPrint(char level, const char *moduleName, const char *fileName, const ch
 
 	lenOfTemp = strlen(tempPrint);
 	sprintf(tempPrint + lenOfTemp, "\n");
-	FILE *fp = fopen("/home/myshare/remote_help_tool/common/logManage/log.txt","a+");
+	FILE *fp = fopen("./log.txt","a+");
 	fwrite(tempPrint,1,strlen(tempPrint),fp);
 	fclose(fp);
 	
