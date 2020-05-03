@@ -3,6 +3,7 @@
 #include <stdarg.h> 
 #include <pthread.h>
 #include <time.h>
+#include <unistd.h>
 #include "logPrint.h"
 
  pthread_mutex_t g_printLock = PTHREAD_MUTEX_INITIALIZER;
@@ -11,6 +12,7 @@ void logPrint(char level, const char *moduleName, const char *fileName, const ch
 	pthread_mutex_lock(&g_printLock);
 	char tempPrint[2048];
 	int lenOfTemp = 0;
+	char path[128] = {0};
 	va_list args;
 
 	if(level == DEBUG) {
@@ -50,15 +52,17 @@ void logPrint(char level, const char *moduleName, const char *fileName, const ch
 	vsprintf(&tempPrint[strlen(tempPrint)], format, args);
 	va_end(args);
 	
-	printf("%s\n",tempPrint);
+//	printf("%s\n",tempPrint);
 
-/*
+	getcwd(path, 128);
+	lenOfTemp = strlen(path);
+	sprintf(path + lenOfTemp, "/log.txt");
 	lenOfTemp = strlen(tempPrint);
 	sprintf(tempPrint + lenOfTemp, "\n");
-	FILE *fp = fopen("./log.txt","a+");
+	FILE *fp = fopen(path,"a+");
 	fwrite(tempPrint,1,strlen(tempPrint),fp);
 	fclose(fp);
-*/	
+
 	pthread_mutex_unlock(&g_printLock);
 }
 

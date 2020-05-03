@@ -11,6 +11,7 @@ CFLAGS += -Wall
 LDFLAGS += -L$(RELEASE_LIB) -llogPrint -lpthread
 
 TARGET=$(RELEASE_BIN)/serve
+LOG=$(RELEASE_BIN)/log.txt
 default:$(TARGET)
 
 OBJPATH=obj
@@ -28,6 +29,7 @@ $(TARGET): $(OBJS)
 
 clean:
 	rm -rf $(TARGET)
+	rm -rf $(LOG)
 	rm -rf *.o
 	@for d in $(OBJDIRS);     \
 	 do                   \
@@ -35,4 +37,5 @@ clean:
 		rm -rf  $$d/*.d ;\
 	 done
 	mkdir -p $(OBJPATH)
-	mkdir -p $(OBJDIRS)
+
+
