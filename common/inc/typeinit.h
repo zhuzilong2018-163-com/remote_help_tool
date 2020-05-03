@@ -23,7 +23,7 @@ typedef enum {
 typedef enum {
 	FAIL   = -1,
 	STR_NULL   = 0,
-	SUCESS = 1, 
+	SUCCESS = 1, 
 } E_RETURN_TYPE;
 
 

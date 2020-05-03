@@ -11,8 +11,6 @@ extern uint8 g_auc_expansionkey[15*16]; //密钥扩展之后的数组
 
 //函数
 extern int32 helper_mode_start(void);
-extern int32 helper_thread_creat(void);
-
 
 #ifdef __cplusplus 
 }

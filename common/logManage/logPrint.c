@@ -52,12 +52,13 @@ void logPrint(char level, const char *moduleName, const char *fileName, const ch
 	
 	printf("%s\n",tempPrint);
 
+/*
 	lenOfTemp = strlen(tempPrint);
 	sprintf(tempPrint + lenOfTemp, "\n");
 	FILE *fp = fopen("./log.txt","a+");
 	fwrite(tempPrint,1,strlen(tempPrint),fp);
 	fclose(fp);
-	
+*/	
 	pthread_mutex_unlock(&g_printLock);
 }
 
