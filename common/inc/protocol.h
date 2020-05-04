@@ -28,6 +28,11 @@ typedef enum {
 	E_CLIENT_PUT = 2, //接收支持的一方
 } E_CLIENT_TYPE;
 
+typedef enum {
+	E_COMMUNICATE = 0,
+    E_CMD         = 1,
+} E_MESSAGE_TYPE;
+
 /*
 typedef enum {
 	E_CONNECT_CTL_STOP = 1,

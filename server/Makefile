@@ -37,5 +37,5 @@ clean:
 		rm -rf  $$d/*.d ;\
 	 done
 	mkdir -p $(OBJPATH)
-
+	mkdir -p $(OBJDIRS)
 
