@@ -7,6 +7,11 @@ else
  rm "$FILE"
 fi
 
+MODE=""
+if [ $1 == "debug" ]; then
+ MODE="-DMODE"
+fi
+
 COMMON=$(pwd)/common
 SERVER=$(pwd)/server
 CLIENT=$(pwd)/client

@@ -52,7 +52,9 @@ void logPrint(char level, const char *moduleName, const char *fileName, const ch
 	vsprintf(&tempPrint[strlen(tempPrint)], format, args);
 	va_end(args);
 	
-//	printf("%s\n",tempPrint);
+	#ifdef MODE
+    printf("%s\n",tempPrint);
+    #endif
 
 	getcwd(path, 128);
 	lenOfTemp = strlen(path);
