@@ -10,14 +10,12 @@
 #include <errno.h>
 #include <sys/socket.h>
 #include <netinet/in.h>
-#include <arpa/inte.h>
 #include "server.h"
 #include "logPrint.h"
 #include "connect.h"
 
 SERVE_SOCKET g_serverListenFd = {
-	.authFd = -1,
-	.dataFd = -1,
+	.sockFd = -1,
 	.port = 0,
 };
 
@@ -30,7 +28,6 @@ int connectInit(unsigned short int port)
 	socklen_t len;
 	struct sockaddr_in server;
 	int b_reuse = 1;
-	char 
 
 	do {
 
@@ -38,29 +35,19 @@ int connectInit(unsigned short int port)
 
 		g_serverListenFd.port = port;
 	
-		g_serverListenFd.authFd = socket(AF_INET, SOCK_STREAM, 0);
-		if (g_serverListenFd.authFd < 0) {
+		g_serverListenFd.sockFd = socket(AF_INET, SOCK_STREAM, 0);
+		if (g_serverListenFd.sockFd < 0) {
 	    	SERVE_ERROR("Create server auth listen error!");
 	    	break;
 		}
 
-		res = setsockopt(g_serverListenFd.authFd,SOL_SOCKET,SO_REUSEADDR,&b_reuse,sizeof(int));
+		res = setsockopt(g_serverListenFd.sockFd,SOL_SOCKET,SO_REUSEADDR,&b_reuse,sizeof(int));
 		if (res < 0) {
 			SERVE_WARN("set auth sock reuser error!");
 		}
 
-		listenFd = g_serverListenFd.authFd;
-		
-		g_serverListenFd.dataFd = socket(AF_INET, SOCK_DGRAM, 0);
-		if (g_serverListenFd.authFd < 0) {
-	    	SERVE_ERROR("Create server error!");
-	    	break;
-		}
+		listenFd = g_serverListenFd.sockFd;
 
-		res = setsockopt(g_serverListenFd.dataFd,SOL_SOCKET,SO_REUSEADDR,&b_reuse,sizeof(int)); 
-		if (res < 0) {
-			SERVE_WARN("set data sock reuser error!");
-		}
 		memset(&server, 0, sizeof(server));
 		server.sin_family = AF_INET;
 		server.sin_port   = htons(port);
@@ -84,8 +71,7 @@ int connectInit(unsigned short int port)
 		return 0;
 	} while(0);
 
-	if (g_serverListenFd.authFd > 0) close(g_serverListenFd.authFd);
-	if (g_serverListenFd.dataFd > 0) close(g_serverListenFd.dataFd);
+	if (g_serverListenFd.sockFd > 0) close(g_serverListenFd.sockFd);
 	g_serverListenFd.port = 0;	
 	
 	return -1;
@@ -96,7 +82,7 @@ int waitAuthRequest(struct sockaddr_in * clientAddr)
 	int socfFd;
 	socklen_t len;
 	do {
-       socfFd = accept(g_serverListenFd.authFd, (struct sockaddr *)&clientAddr, &len);
+       socfFd = accept(g_serverListenFd.sockFd, (struct sockaddr *)&clientAddr, &len);
     	if(socfFd < 0) {
         	continue;
     	}
@@ -111,7 +97,6 @@ int processClientRequest(int sockFd,struct sockaddr_in *clientAddr)
 {
 	AUTH_HEADER_REQUEST request;
 	AUTH_HEADER_RESPONSE response;
-	int res;
 	bool ret;
 	int size;
 	char *ip = NULL;
@@ -149,7 +134,7 @@ int processClientRequest(int sockFd,struct sockaddr_in *clientAddr)
 		} 
 		if (ret){
 			ip = inet_ntoa(clientAddr->sin_addr);
-			strcpy(connectiInfo->clientPutIp, ip);
+			strcpy(connectiInfo.clientPutIp, ip);
 			ret = addConnectToQueue(&connectiInfo , E_CLIENT_PUT);
 			if (!ret) {
 				response.result = -1;
@@ -242,7 +227,7 @@ bool addConnectToQueue(CLIENT_QUEUE *info, E_CLIENT_TYPE type)
 
 	if (type == E_CLIENT_GET) {
 		for(i = 0; i < MAX_SESSION_NUM; i++) {
-			if (!g_connecQueue[i].sessionId == info.sessionId) {
+			if (g_connecQueue[i].sessionId == info->sessionId) {
 				result = true;
 				break;
 			}
@@ -251,7 +236,7 @@ bool addConnectToQueue(CLIENT_QUEUE *info, E_CLIENT_TYPE type)
 		do {
 			if (!result) break;
 
-			strcpy(g_connecQueue[i].clientPutIp, info.clientPutIp);
+			strcpy(g_connecQueue[i].clientPutIp, info->clientPutIp);
 		} while(0);
 	}
 	pthread_mutex_unlock(&g_connecQueueLock);

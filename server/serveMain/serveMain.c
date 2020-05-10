@@ -12,7 +12,7 @@ int main(int argc, char *argv[])
 	int sockFd;
 	struct sockaddr_in clientAddr;
 
-	res = taskProcessInit();
+	res = taskProcessInit(SERVER_PORT);
 	if (res < 0) {
 		SERVE_ERROR("taskProcessInit error!");
 	}

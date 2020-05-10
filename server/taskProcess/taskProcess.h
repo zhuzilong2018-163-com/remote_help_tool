@@ -5,7 +5,7 @@
 extern "C" { 
 #endif 
 
-int taskProcessInit(void);
+int taskProcessInit(unsigned short int port);
 
 #ifdef __cplusplus 
 }

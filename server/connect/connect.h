@@ -13,8 +13,7 @@ extern "C" {
 #define MAX_SESSION_NUM 32
 
 typedef struct {
-	int authFd;
-	int dataFd;
+	int sockFd;
 	unsigned short int port;
 } SERVE_SOCKET;
 
