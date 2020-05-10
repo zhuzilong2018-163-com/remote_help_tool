@@ -7,6 +7,8 @@ extern "C" {
 
 #include <stdbool.h>
 #include <time.h>
+#include <sys/socket.h>
+#include "typeinit.h"
 
 #define SERVER_IP    "47.93.49.83"
 #define SERVER_PORT  443
@@ -29,8 +31,14 @@ typedef enum {
 } E_CLIENT_TYPE;
 
 typedef enum {
+	E_CMD_MODE = 1, //提供支持的一方
+	E_COMMUNICATE_MODE = 2, //接收支持的一方
+} E_COMMUNICATE_TYPE;
+
+
+typedef enum {
 	E_COMMUNICATE = 0,
-    E_CMD         = 1,
+    E_CMD    = 1,
 } E_MESSAGE_TYPE;
 
 /*
@@ -76,6 +84,14 @@ typedef  struct {
 	bool result;              // 数据包接收结果
 	bool reSend;              // 是否需要重新发送
 } DATA_TRANSPORT_RESPONSE;
+
+typedef  struct {
+	int32 sock;
+    socklen_t len;
+    struct sockaddr_in serv_adr;
+    struct sockaddr_in from_adr;
+} PTHREAD_ARGV;
+
 
 /*
 typedef  struct {

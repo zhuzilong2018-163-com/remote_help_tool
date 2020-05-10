@@ -1,15 +1,21 @@
 #!/bin/bash
 FILE="config.mk"
+
 if [ ! -f "$FILE" ]; then
  touch "$FILE"
  chmod 777 "$FILE"
 else
  rm "$FILE"
+ touch "$FILE"
+ chmod 777 "$FILE"
 fi
 
-MODE=""
-if [ $1 == "debug" ]; then
+if [ "$1" = "debug" ]; then
  MODE="-DMODE"
+ echo "debug mode"
+else
+ MODE=""
+ echo "release"
 fi
 
 COMMON=$(pwd)/common
