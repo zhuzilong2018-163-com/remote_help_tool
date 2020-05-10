@@ -18,17 +18,22 @@ int taskProcessInit(void)
 	res = pthread_create(&g_taskProcessId, NULL, pthreadTaskProcess, NULL);
 	if (res < 0) {
 		SERVE_ERROR("create taskProcess pthread error!\n");
+		g_pthreadRunFlag = false;
+		return -1;
 	}
+	g_pthreadRunFlag = ture;
 	return 0;
 }
 
 void stopTaskProcess(void)
 {
-	
+	g_pthreadRunFlag = false;
+	pthread_join(g_taskProcessId, NULL);
 }
 
 void *pthreadTaskProcess(void *arg)
 {
+	
 	while (g_pthreadRunFlag) {
 		
 	}

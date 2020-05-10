@@ -8,6 +8,9 @@
 #include <sys/types.h>
 #include <time.h>
 #include <errno.h>
+#include <sys/socket.h>
+#include <netinet/in.h>
+#include <arpa/inte.h>
 #include "server.h"
 #include "logPrint.h"
 #include "connect.h"
@@ -27,6 +30,7 @@ int connectInit(unsigned short int port)
 	socklen_t len;
 	struct sockaddr_in server;
 	int b_reuse = 1;
+	char 
 
 	do {
 
@@ -110,10 +114,12 @@ int processClientRequest(int sockFd,struct sockaddr_in *clientAddr)
 	int res;
 	bool ret;
 	int size;
+	char *ip = NULL;
 	CLIENT_QUEUE connectiInfo;
 	
 	memset(&request, 0, sizeof(request));
 	memset(&response, 0, sizeof(response));
+	memset(&connectiInfo, 0, sizeof(connectiInfo));
 
 	size =  recv(sockFd, (void *)&request, sizeof(request), 0);
 	if (size < sizeof(request)) {
@@ -121,21 +127,38 @@ int processClientRequest(int sockFd,struct sockaddr_in *clientAddr)
 	}
 
 	SERVE_INFO("client type:%d\t connect type:%d",request.clientType, request.connectType);
-	
+
+	response.connectType = request.connectType;
+	response.encryptType = request.encryptType;
+	response.sessionId = time(NULL);
+
 	if (request.clientType == E_CLIENT_GET) {
-		//bool addConnectToQueue(CLIENT_QUEUE info);
-	} else if (request.clientType == E_CLIENT_PUT) {
-		memset(&connectiInfo, 0, sizeof(connectiInfo));
-		ret = findConnectOfQueue(request.sessionId, &connectiInfo);
+		ip = inet_ntoa(clientAddr->sin_addr);
+		strcpy(connectiInfo.clientGetIp, ip);
+		strcpy(connectiInfo.key, request.key);
+		ret = addConnectToQueue(&connectiInfo , E_CLIENT_GET);
 		if (!ret) {
 			response.result = -1;
 		} else {
 			response.result = 0;
-			//strcpy(connectiInfo.clientPutIp, server.sin_addr.s_addr);
-			response.connectType = request.connectType;
-			response.encryptType = request.encryptType;
-			response.sessionId = connectiInfo.sessionId;
-			strcpy(response.ip, connectiInfo.clientGetIp);
+		}
+	} else if (request.clientType == E_CLIENT_PUT) {
+		ret = findConnectOfQueue(request.sessionId, &connectiInfo);
+		if (!ret) {
+			response.result = -1;
+		} 
+		if (ret){
+			ip = inet_ntoa(clientAddr->sin_addr);
+			strcpy(connectiInfo->clientPutIp, ip);
+			ret = addConnectToQueue(&connectiInfo , E_CLIENT_PUT);
+			if (!ret) {
+				response.result = -1;
+			} else {
+				response.result = 0;
+				response.sessionId = connectiInfo.sessionId;
+				strcpy(response.ip, connectiInfo.clientGetIp);
+				strcpy(response.key, connectiInfo.key);
+			}
 		}
 		
 	}
@@ -165,9 +188,13 @@ bool findConnectOfQueue(unsigned int sessionId, CLIENT_QUEUE *conectInfo)
 		if (!g_connecQueue[i].sessionStatus) continue;
 		if (g_connecQueue[i].sessionId == sessionId) {
 			result = true;
+			break;
 		}
 	}
+	
 	do {
+		if(!result) break;
+
 		timeNow = time(NULL);
 
 		if (timeNow > g_connecQueue[i].terminalTime) {
@@ -181,10 +208,52 @@ bool findConnectOfQueue(unsigned int sessionId, CLIENT_QUEUE *conectInfo)
 		}
 	} while (0);
 	pthread_mutex_unlock(&g_connecQueueLock);
+
 	return result;
 }
 
-bool addConnectToQueue(CLIENT_QUEUE info)
+bool addConnectToQueue(CLIENT_QUEUE *info, E_CLIENT_TYPE type)
 {
-	return true;
+	int i;
+	bool result = false;
+	time_t timeNow;
+	pthread_mutex_lock(&g_connecQueueLock);
+
+	if (type == E_CLIENT_GET) {
+		for(i = 0; i < MAX_SESSION_NUM; i++) {
+			if (!g_connecQueue[i].sessionStatus) {
+				result = true;
+				break;
+			}
+		}
+
+		do {
+			if (!result) break;
+			timeNow = time(NULL);
+
+			g_connecQueue[i].sessionStatus = true;
+			g_connecQueue[i].sessionId = timeNow;
+			g_connecQueue[i].terminalTime = timeNow + (60 * 60 * 60);
+			strcpy(g_connecQueue[i].key, info->key);
+			strcpy(g_connecQueue[i].clientGetIp, info->clientGetIp);
+			memcpy(info, &g_connecQueue[i], sizeof(CLIENT_QUEUE));
+		} while(0);
+	}
+
+	if (type == E_CLIENT_GET) {
+		for(i = 0; i < MAX_SESSION_NUM; i++) {
+			if (!g_connecQueue[i].sessionId == info.sessionId) {
+				result = true;
+				break;
+			}
+		}
+
+		do {
+			if (!result) break;
+
+			strcpy(g_connecQueue[i].clientPutIp, info.clientPutIp);
+		} while(0);
+	}
+	pthread_mutex_unlock(&g_connecQueueLock);
+	return result;
 }

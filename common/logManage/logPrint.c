@@ -6,7 +6,7 @@
 #include <unistd.h>
 #include "logPrint.h"
 
- pthread_mutex_t g_printLock = PTHREAD_MUTEX_INITIALIZER;
+pthread_mutex_t g_printLock = PTHREAD_MUTEX_INITIALIZER;
 void logPrint(char level, const char *moduleName, const char *fileName, const char *functionName,int lineNum, const char *format,...)
 {
 	pthread_mutex_lock(&g_printLock);
