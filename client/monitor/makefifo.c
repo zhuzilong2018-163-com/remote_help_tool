@@ -7,18 +7,21 @@
 
 int main(int argc, char *argv[])
 {
-	char buf[128];
-	int fd = open(argv[1], O_RDONLY);
+	char buf[128] = {"this is a test"};
+	int fd1 = mkfifo("123.txt", 0755);
+	if(fd1 == -1){
+		perror("fifo");
+		return -1;
+	}
+
+	int fd = open(argv[1], O_WRONLY);
 	if(fd == -1){
 		perror("open");
 		return -1;
 	}
-	
-	int r = read(fd, buf, 128);
-    write(1, buf, r);
-	printf("\n");
+
+	write(fd, buf, strlen(buf));
 	close(fd);
+	return 0;
+	
 }
-
-
-

@@ -6,7 +6,7 @@ CFLAGS += -Wall
 
 #添加库文件路劲和链接库文件
 LDFLAGS += -L$(RELEASE_LIB) -llogPrint
-LDFLAGS += -L$(RELEASE_LIB) -laes
+DFLAGS += -L$(RELEASE_LIB) -laes
 
 TARGET=$(RELEASE_BIN)/debug
 
