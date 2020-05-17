@@ -4,7 +4,10 @@
 #ifdef __cplusplus 
 extern "C" { 
 #endif 
+#include "typeinit.h"
 
+//函数
+extern int32 beneficiary_mode_start(void);
 
 
 #ifdef __cplusplus 

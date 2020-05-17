@@ -5,6 +5,7 @@
 #include "helper.h"
 #include "client.h"
 #include "typeinit.h"
+#include "beneficiary.h"
 
 //全局变量
 //模式判断变量
@@ -27,6 +28,7 @@ int main(int argc, char *argv[])
         helper_mode_start();
     } else if (g_mode == E_MODE_BENEFICIARY) {
         INFO_LOG(DEBUG_CLIENT, "%s\n", "It's initing\n");
+        beneficiary_mode_start();
     } else {
         WARN_LOG(DEBUG_CLIENT, "%s\n", "Please select mode again!!\n");
     }

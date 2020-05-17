@@ -34,7 +34,7 @@ void pthread_message_come(void *argv)
     PTHREAD_ARGV st_come_pthread_argcv;
     memcpy(&st_come_pthread_argcv, argv, sizeof(PTHREAD_ARGV));
     while (1) {
-        recvfrom(st_come_pthread_argcv.sock, &buf, sizeof(buf), 0, (struct sockaddr *)&(st_come_pthread_argcv.from_adr), &st_come_pthread_argcv.len);
+        recvfrom(st_come_pthread_argcv.sock, &buf, sizeof(buf), MSG_PEEK, (struct sockaddr *)&(st_come_pthread_argcv.from_adr), &st_come_pthread_argcv.len);
     }
 }
 
@@ -119,6 +119,7 @@ void helper_thread_create(void)
 
     size = sizeof(struct sockaddr_in);
 	bzero(&serv_adr, size);
+	bzero(&from_adr, size);
 	serv_adr.sin_family = AF_INET;
 	serv_adr.sin_port = htons(SERVER_PORT); //服务器绑定的端口
 	serv_adr.sin_addr.s_addr = inet_addr(SERVER_IP);//服务器的IP地址
